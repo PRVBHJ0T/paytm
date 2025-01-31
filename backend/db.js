@@ -1,28 +1,55 @@
+const mongoose = require('mongoose'); 
+const { MONGODB_URI } = require('./config');
 
-const mongoose = require('mongoose');
 
+mongoose.connect(MONGODB_URI);
 
-mongoose.connect("mongodb+srv://prabhjotwerk:VHANzTRiXIeZhB22@cluster0.la0ugaa.mongodb.net/paytm")
-
+// Create a Schema for Users
 const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    userName:String,
-    password: String,
-})
-const accountSchema = new  mongoose.Schema({
-    userId : {
-        type :mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required : true
+    username: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true,
+        lowercase: true,
+        minLength: 3,
+        maxLength: 30
     },
-    balance :{         
-        type:Number,
-        required:true
+    password: {
+        type: String,
+        required: true,
+        minLength: 6
+    },
+    firstName: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: 50
+    },
+    lastName: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: 50
     }
-})
-const User =mongoose.model('User',userSchema)
-const Accounts = mongoose.model('Accounts',accountSchema)
+});
 
+const accountSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // Reference to User model
+        ref: 'User',
+        required: true
+    },
+    balance: {
+        type: Number,
+        required: true
+    }
+});
 
-module.exports = {User,Accounts};
+const Account = mongoose.model('Account', accountSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = {
+	User,
+    Account
+};
